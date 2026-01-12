@@ -1,0 +1,29 @@
+[MASTER]
+load-plugins=pylint_django
+ignore=migrations,venv,chroma_db
+django-settings-module=backend.settings
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    too-many-ancestors,
+    too-many-locals,
+    broad-exception-caught,
+    line-too-long,
+    wrong-import-order
+
+[FORMAT]
+max-line-length=120
+
+[DESIGN]
+max-parents=15
+max-locals=20
+
+[TYPECHECK]
+ignored-modules=google.generativeai
+
+[REPORTS]
+output-format=text
+score=yes

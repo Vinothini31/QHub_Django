@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QHub Chat</title>
+    <link rel="stylesheet" href="{% static 'frontend/css/chat.css' %}">
+</head>
+<body>
+
+<div class="chat-wrapper">
+
+    <!-- 🔹 SIDEBAR -->
+    <div class="chat-sidebar" id="chatSidebar">
+        <h3>Chat History</h3>
+
+        <ul id="historyList">
+            <!-- JS will populate previous messages here -->
+        </ul>
+
+        <!-- ✅ LOGOUT BUTTON AT BOTTOM -->
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+
+        </div>
+    </div>
+
+    <!-- 🔹 MAIN CHAT AREA -->
+    <div class="chat-container">
+
+        <!-- 🔹 TOP BAR -->
+        <div class="top-bar">
+            <h2 class="app-title">QHub AI</h2>
+            <button id="newChatBtn" class="new-chat-btn">+ New Chat</button>
+        </div>
+
+        <!-- 🔹 CHAT MESSAGES -->
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <!-- 🔹 CHAT INPUT BAR -->
+        <form class="chat-input" id="chatForm">
+
+            <!-- ChatGPT-style upload (+) button -->
+            <label for="fileUpload" class="upload-btn">+</label>
+            <input type="file" id="fileUpload" hidden />
+
+            <input
+                type="text"
+                id="userInput"
+                placeholder="Type your message..."
+                required
+            />
+
+            <button type="submit">Send</button>
+        </form>
+
+    </div>
+</div>
+
+<!-- Removed unused OPENAI_URL definition -->
+<script src="{% static 'frontend/js/chat.js' %}"></script>
+
+</body>
+</html>

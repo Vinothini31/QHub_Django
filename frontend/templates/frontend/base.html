@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QHub AI</title>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{% static 'frontend/css/chat.css' %}">
+</head>
+<body>
+
+    <!-- ===== TOP BAR ===== -->
+    <div class="top-bar">
+        <h2 class="app-title">QHub</h2>
+
+        <button id="newChatBtn" class="new-chat-btn">
+            + New Chat
+        </button>
+    </div>
+    <!-- =================== -->
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Global JS -->
+    <script src="{% static 'frontend/js/chat.js' %}"></script>
+
+</body>
+</html>
