@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: qhub
+    env: python
+    plan: free
+    region: oregon
+    autoDeploy: true
+
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py migrate
+      python manage.py collectstatic --noinput
+
+    startCommand: gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+
+    healthCheckPath: /api/
+
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+
+      - key: DJANGO_DEBUG
+        value: "False"
+
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+
+      - key: GEMINI_API_KEY
+        value: "PUT_YOUR_KEY_HERE"
