@@ -6,17 +6,69 @@
     <link rel="stylesheet" href="{% static 'frontend/css/auth.css' %}">
 </head>
 <body>
+
     <h2>Create Account</h2>
 
-    <form>
-        <input type="text" placeholder="Username" required>
-        <input type="email" placeholder="Email" required>
-        <input type="password" placeholder="Password" required>
+    <form id="signupForm">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+
         <button type="submit">Sign Up</button>
     </form>
 
-    <p>Already have an account?
+    <!-- ✅ Message area -->
+    <p id="message" style="text-align:center; margin-top:10px;"></p>
+
+    <p>
+        Already have an account?
         <a href="/">Login</a>
     </p>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const messageEl = document.getElementById("message");
+            messageEl.innerHTML = "";
+
+            fetch("/api/register/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: document.getElementById("username").value,
+                    email: document.getElementById("email").value,
+                    password: document.getElementById("password").value
+                })
+            })
+            .then(async response => {
+                if (response.status === 201) {
+                    messageEl.innerHTML =
+                        "<span style='color:green;'>Account created successfully! Please log in.</span>";
+
+                    setTimeout(() => {
+                        window.location.href = "/";
+                    }, 2000);
+                } else {
+                    const data = await response.json();
+                    let errorMsg = "Signup failed.";
+                    if (data && typeof data === 'object') {
+                        errorMsg += "<br>" + Object.entries(data).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('<br>');
+                    }
+                    messageEl.innerHTML = `<span style='color:red;'>${errorMsg}</span>`;
+                }
+            })
+            .catch(error => {
+                let errorMsg = "Signup failed.";
+                if (error && typeof error === 'object') {
+                    errorMsg += "<br>" + Object.entries(error).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('<br>');
+                }
+                messageEl.innerHTML = `<span style='color:red;'>${errorMsg}</span>`;
+            });
+        });
+    </script>
+
 </body>
 </html>

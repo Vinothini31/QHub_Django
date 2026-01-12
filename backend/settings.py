@@ -1,15 +1,15 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv   # ⭐ Added for Gemini API
+from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()    # ⭐ Added
+load_dotenv()
 
 """
 Django settings for backend project
-configured for PostgreSQL, JWT auth, REST API and CORS.
-Minimal but production-ready defaults using environment variables.
+Configured for PostgreSQL/SQLite, JWT auth, REST API, CORS
+Production-safe for Render deployment
 """
 
 # Base dir
@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "change-me-in-production")
 DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() in ("1", "true", "yes")
 
-# ✅ FIXED ALLOWED_HOSTS (Render-safe)
+# ✅ Render-safe allowed hosts
 ALLOWED_HOSTS = os.getenv(
     "DJANGO_ALLOWED_HOSTS",
     "127.0.0.1,localhost,.onrender.com"
@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third party
+    # Third-party
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "chat",
     "documents",
     "frontend",
-    
 ]
 
 # Middleware
@@ -54,6 +53,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # Must be first
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -82,7 +82,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-# Database - SQLite
+# Database (SQLite – Render supported)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -90,7 +90,7 @@ DATABASES = {
     }
 }
 
-# Custom user
+# Custom user model
 AUTH_USER_MODEL = os.getenv("AUTH_USER_MODEL", "users.CustomUser")
 
 # Password validation
@@ -108,20 +108,21 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static & media
+# Static files (Render + WhiteNoise)
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+# Media
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ✅ CORS - updated for local + hosted frontend
+# CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React dev server
-    "https://qhub-updated.onrender.com",  # Replace with your actual Render frontend URL
+    "http://localhost:3000",
+    "https://qhub-updated.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -141,12 +142,16 @@ REST_FRAMEWORK = {
 
 # JWT Settings
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=int(os.getenv("JWT_ACCESS_MINUTES", "60"))),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=int(os.getenv("JWT_REFRESH_DAYS", "7"))),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=int(os.getenv("JWT_ACCESS_MINUTES", "60"))
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=int(os.getenv("JWT_REFRESH_DAYS", "7"))
+    ),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# Session
+# Sessions
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 SESSION_SAVE_EVERY_REQUEST = False
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
@@ -156,7 +161,9 @@ EMAIL_BACKEND = os.getenv(
     "DJANGO_EMAIL_BACKEND",
     "django.core.mail.backends.console.EmailBackend"
 )
-DEFAULT_FROM_EMAIL = os.getenv("DJANGO_DEFAULT_FROM_EMAIL", "noreply@example.com")
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DJANGO_DEFAULT_FROM_EMAIL", "noreply@example.com"
+)
 
 # Logging
 LOGGING = {
@@ -165,12 +172,16 @@ LOGGING = {
     "handlers": {
         "console": {"class": "logging.StreamHandler"},
     },
-    "root": {"handlers": ["console"], "level": os.getenv("DJANGO_LOG_LEVEL", "INFO")},
+    "root": {
+        "handlers": ["console"],
+        "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+    },
 }
 
-# When behind a proxy (Render)
+# Render proxy support
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# GEMINI API KEY
+# Gemini API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 LOGOUT_REDIRECT_URL = "/"

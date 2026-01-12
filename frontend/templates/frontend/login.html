@@ -31,7 +31,8 @@
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
-            fetch("/api/token/", {
+            // ✅ FIXED ENDPOINT
+            fetch("/api/login/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -41,9 +42,10 @@
                     password: password
                 })
             })
-            .then(response => {
+            .then(async response => {
                 if (!response.ok) {
-                    throw new Error("Invalid credentials");
+                    const data = await response.json();
+                    throw new Error(data.detail || "Invalid username or password");
                 }
                 return response.json();
             })
@@ -56,8 +58,7 @@
                 window.location.href = "/chat/";
             })
             .catch(error => {
-                document.getElementById("error").innerText =
-                    "Invalid username or password";
+                document.getElementById("error").innerText = error.message;
             });
         }
     </script>
