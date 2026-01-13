@@ -7,13 +7,14 @@ services:
     autoDeploy: true
 
     buildCommand: |
-      pip install -r requirements.txt
-      python manage.py migrate
-      python manage.py collectstatic --noinput
+      pip install --upgrade pip
+      pip install -r backend/requirements.txt
+      python backend/manage.py migrate
+      python backend/manage.py collectstatic --noinput
 
-    startCommand: gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: gunicorn backend.backend.wsgi:application --bind 0.0.0.0:$PORT
 
-    healthCheckPath: /api/
+    healthCheckPath: /
 
     envVars:
       - key: DJANGO_SECRET_KEY
@@ -26,4 +27,4 @@ services:
         value: ".onrender.com"
 
       - key: GEMINI_API_KEY
-        value: "PUT_YOUR_KEY_HERE"
+        sync: false
